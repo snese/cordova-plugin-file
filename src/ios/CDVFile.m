@@ -421,6 +421,20 @@ NSString* const kCDVFilesystemURLPrefix = @"cdvfile";
     return pNumAvail;
 }
 
+- (NSNumber*)checkTotalDiskSpace:(NSString*)appPath
+{
+    NSFileManager* fMgr = [NSFileManager defaultManager];
+
+    NSError* __autoreleasing pError = nil;
+
+    // NSDictionary* pDict = [fMgr attributesOfFileSystemForPath:appPath error:&pError];
+    NSDictionary* pDict = [fMgr attributesOfFileSystemForPath:@"/" error:&pError];
+    NSNumber* pNumTotal = (NSNumber*)[pDict objectForKey:NSFileSystemSize];
+
+    return pNumTotal;
+}
+
+
 /* Request the File System info
  *
  * IN:
@@ -1079,6 +1093,21 @@ NSString* const kCDVFilesystemURLPrefix = @"cdvfile";
     // NSLog(@"Free space is %@", strFreeSpace );
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:strFreeSpace];
+
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+}
+
+// Returns number of bytes total via callback
+- (void)totalSpaceCalculation:(CDVInvokedUrlCommand*)command
+{
+    // no arguments
+
+    NSNumber* pNumTotal = [self checkTotalDiskSpace:self.rootDocsPath];
+
+    NSString* strTotalSpace = [NSString stringWithFormat:@"%qu", [pNumTotal unsignedLongLongValue]];
+    // NSLog(@"Total space is %@", strTotalSpace );
+
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:strTotalSpace];
 
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }

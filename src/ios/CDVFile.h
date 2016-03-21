@@ -99,6 +99,7 @@ typedef int CDVFileError;
 }
 
 - (NSNumber*)checkFreeDiskSpace:(NSString*)appPath;
+- (NSNumber*)checkTotalDiskSpace:(NSString*)appPath;
 - (NSDictionary*)makeEntryForPath:(NSString*)fullPath fileSystemName:(NSString *)fsName isDirectory:(BOOL)isDir;
 - (NSDictionary *)makeEntryForURL:(NSURL *)URL;
 - (CDVFilesystemURL *)fileSystemURLforLocalPath:(NSString *)localPath;
@@ -128,6 +129,7 @@ typedef int CDVFileError;
 - (void)testFileExists:(CDVInvokedUrlCommand*)command;
 - (void)testDirectoryExists:(CDVInvokedUrlCommand*)command;
 - (void)getFreeDiskSpace:(CDVInvokedUrlCommand*)command;
+- (void)totalSpaceCalculation:(CDVInvokedUrlCommand*)command;
 - (void)truncate:(CDVInvokedUrlCommand*)command;
 - (void)doCopyMove:(CDVInvokedUrlCommand*)command isCopy:(BOOL)bCopy;
 
