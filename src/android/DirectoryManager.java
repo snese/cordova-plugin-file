@@ -58,21 +58,25 @@ public class DirectoryManager {
     /**
      * Get the free space in external storage
      *
-     * @return 		Size in KB or -1 if not available
+     * @return 		Size in Byte or -1 if not available
      */
-    public static long getFreeExternalStorageSpace() {
+    public static long getFreeDiskSpace(boolean checkInternal) {
         String status = Environment.getExternalStorageState();
         long freeSpaceInBytes = 0;
 
         // Check if external storage exists
         if (status.equals(Environment.MEDIA_MOUNTED)) {
             freeSpaceInBytes = getFreeSpaceInBytes(Environment.getExternalStorageDirectory().getPath());
-        } else {
-            // If no external storage then return -1
+        }
+        else if (checkInternal) {
+            freeSpace = getFreeSpaceInBytes("/");
+        }
+        // If no SD card and we haven't been asked to check the internal directory then return -1
+        else {
             return -1;
         }
 
-        return freeSpaceInBytes / 1024;
+        return freeSpaceInBytes;
     }
 
     /**
@@ -91,6 +95,28 @@ public class DirectoryManager {
             // The path was invalid. Just return 0 free bytes.
             return 0;
         }
+    }
+
+    public static long totalSpaceCalculation() {
+        String status = Environment.getExternalStorageState();
+        long totalSpace = 0;
+        long blockCount = 0;
+        long blockSize = 0;
+
+        // If SD card exists
+        if (status.equals(Environment.MEDIA_MOUNTED)) {
+            StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+            blockCount = stat.getBlockCount();
+            blockSize = stat.getBlockSize();
+            totalSpace = blockCount * blockSize;
+        }
+        else {
+            StatFs stat = new StatFs("/");
+            blockCount = stat.getBlockCount();
+            blockSize = stat.getBlockSize();
+            totalSpace = blockCount * blockSize;
+        }
+        return totalSpace;
     }
 
     /**
